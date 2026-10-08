@@ -1,0 +1,79 @@
+CROC // DOSSIER DE TRAQUE — site statique pour GitHub Pages
+===========================================================
+
+Le dossier confidentiel que le Système tient sur Croc : un bureau d'enquêteur
+la nuit, un dossier kraft, huit intercalaires (Fiche, Caméra, Profil, Tri,
+Évaluation, Protocole, Mention, Pièces). Aucune étape de construction :
+ce sont de simples fichiers à déposer tels quels.
+
+CONTENU DU DOSSIER
+- index.html   la page
+- style.css    l'apparence
+- app.js       les animations, les sons et les interactions
+- data.js      TOUT le texte du site (c'est le seul fichier à modifier)
+- images/      les illustrations
+- .nojekyll    fichier vide qui dit à GitHub de servir le site tel quel
+               (il est caché sur certains ordinateurs : ce n'est pas grave
+               s'il ne part pas, le site fonctionne quand même)
+
+
+METTRE EN LIGNE SUR GITHUB PAGES
+1. Sur github.com : bouton « + » en haut à droite > « New repository ».
+   Nom : par exemple « croc » · visibilité : Public · « Create repository ».
+2. Dans le dépôt vide, clique sur « uploading an existing file »
+   (ou plus tard : « Add file > Upload files »).
+3. Glisse le CONTENU du dossier (index.html, style.css, app.js, data.js,
+   LISEZMOI.txt, .nojekyll et le dossier images/), pas le dossier lui-même :
+   index.html doit se retrouver à la racine du dépôt.
+4. En bas de la page : « Commit changes ».
+5. Onglet « Settings » > « Pages » (menu de gauche) > « Build and deployment » :
+   Source = « Deploy from a branch » · Branch = « main » · dossier « / (root) »
+   · « Save ».
+6. Attends 1 à 2 minutes puis recharge la page Pages : l'adresse s'affiche en haut,
+   du type https://TON-PSEUDO.github.io/croc/
+
+
+MODIFIER LE CONTENU (data.js)
+- Sur GitHub : clique sur data.js > icône crayon (Edit) > modifie > « Commit changes ».
+  Le site se met à jour en une minute environ.
+- Garde la ponctuation du fichier : chaque texte est entre apostrophes ' '
+  ou guillemets " ", et chaque ligne se termine par une virgule.
+  Si ton texte contient une apostrophe et qu'il est entre ' ', écris \'
+  (exemple : 'Portrait à l\'encre').
+- Ce qu'on y trouve :
+    nom, sousTitre, frere ........ couverture et fiche
+    boot ......................... lignes tapées par le Système à l'ouverture
+    champs ....................... fiche signalétique ; une valeur '???' devient
+                                   une bande de censure noire
+    physique ..................... « Signes particuliers »
+    psycho ....................... notes de profilage
+    stats (sur 20), rolls (sur 100) grille d'évaluation et cadrans
+    competences .................. Lien Infortuné (niveaux, coût, préavis,
+                                   condition, spécial) et Maîtrise des armes lourdes
+    catastrophes ................. liste d'exemples tirés au hasard par la simulation
+    titres ....................... note de service du titre
+    galerie ...................... pièces à conviction (chemin de l'image + description)
+    dossier ...................... (ajout propre à cette version) quelle image
+                                   va sur la fiche, la caméra, le tableau de liège
+                                   et la note de service
+- Nouvelle image : « Add file > Upload files » dans le dossier images/,
+  puis ajoute une ligne dans « galerie » de data.js, par exemple :
+  { src: 'images/mon-image.jpg', alt: 'Description courte' },
+
+
+À SAVOIR
+- Les sons sont fabriqués par le navigateur (aucun fichier audio) : machine à écrire,
+  tampons, papier, appareil photo, néon, caméra, téléscripteur, sirène, pluie.
+  Ils ne démarrent qu'après le clic « Ouvrir le dossier, avec le son ».
+  Le bouton « Son » en haut à droite les coupe ou les rallume à tout moment.
+- Rien n'a été inventé sur Croc : ce qui manque dans la fiche reste « ??? ».
+  La fiche de tri (NPC numérotés) et les rapports d'incident sont des simulations
+  illustratives, signalées comme telles sur la page.
+- Le dé du niveau 5 de Lien Infortuné va de 1 à 100 (champ « des » dans data.js).
+- Si l'utilisateur a demandé « réduire les animations » sur son appareil,
+  les tremblements, défilements et animations sont coupés.
+- On peut ouvrir directement un intercalaire avec une adresse du type
+  .../croc/#protocole (fiche, camera, profil, tri, evaluation, protocole,
+  mention, pieces).
+- Illustrations : fan arts, droits réservés à leurs auteurs. Si tu connais
+  les artistes, ajoute leurs noms dans le pied de page (index.html, classe « credit »).

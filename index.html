@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Croc — Dossier de traque</title>
+<meta name="description" content="Le dossier confidentiel que le Système tient sur Croc, sujet sous surveillance dans Le Dédale.">
+<meta name="theme-color" content="#16110e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Filtres SVG partagés (encre des tampons, fish-eye de la caméra) -->
+<svg class="defs" aria-hidden="true" focusable="false" width="0" height="0">
+  <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="fisheye" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+    <feImage id="fishmap" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map"/>
+    <feDisplacementMap id="fishdisp" in="SourceGraphic" in2="map" scale="60" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<!-- Le bureau -->
+<div id="desk" aria-hidden="true">
+  <div class="window-light"></div>
+  <canvas id="rain"></canvas>
+  <div class="ring r1"></div><div class="ring r2"></div>
+  <div class="pencil"></div>
+  <div class="matches"></div>
+</div>
+
+<header id="bar">
+  <div class="bar-l"><span class="led" aria-hidden="true"></span><span class="bar-sys">[SYSTÈME] Surveillance active</span></div>
+  <div class="bar-c" id="clock" aria-hidden="true">--:--:--</div>
+  <button id="snd" type="button" aria-pressed="false">Son : coupé</button>
+</header>
+
+<main id="folder" inert>
+  <div class="folder-back" aria-hidden="true">
+  </div>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Intercalaires du dossier">
+    <button role="tab" id="t-fiche"      aria-controls="fiche"      data-c="0">Fiche</button>
+    <button role="tab" id="t-camera"     aria-controls="camera"     data-c="1">Caméra</button>
+    <button role="tab" id="t-profil"     aria-controls="profil"     data-c="2">Profil</button>
+    <button role="tab" id="t-tri"        aria-controls="tri"        data-c="3">Tri</button>
+    <button role="tab" id="t-evaluation" aria-controls="evaluation" data-c="4">Évaluation</button>
+    <button role="tab" id="t-protocole"  aria-controls="protocole"  data-c="5">Protocole</button>
+    <button role="tab" id="t-mention"    aria-controls="mention"    data-c="6">Mention</button>
+    <button role="tab" id="t-pieces"     aria-controls="pieces"     data-c="7">Pièces</button>
+  </nav>
+
+  <div id="sheets">
+
+    <!-- I. FICHE SIGNALÉTIQUE -->
+    <section class="sheet" id="fiche" role="tabpanel" aria-labelledby="t-fiche" tabindex="-1">
+      <div class="coffee c1" aria-hidden="true"></div>
+      <header class="sh-head">
+        <p class="sh-ref">Dossier de traque · feuillet I</p>
+        <h1 class="sh-title">Fiche signalétique</h1>
+      </header>
+      <div class="telex" id="boot" aria-live="polite"></div>
+      <div class="id-grid">
+        <figure class="mug" id="mug">
+          <span class="clip" aria-hidden="true"></span>
+          <img id="mugimg" alt="">
+          <figcaption>Photographie jointe</figcaption>
+        </figure>
+        <div class="id-fields">
+          <p class="subject">Sujet : <strong id="subjname"></strong></p>
+          <p class="subsub" id="subsub"></p>
+          <dl id="champs"></dl>
+          <div class="stamp-slot s-dang" data-stamp="SUJET DANGEREUX" data-tone="red"></div>
+        </div>
+      </div>
+      <h2 class="h2">Signes particuliers</h2>
+      <ol class="typed-list" id="phys"></ol>
+      <div class="stamp-slot s-conf" data-stamp="CONFIDENTIEL" data-tone="red" data-small></div>
+      <div class="next-wrap"></div>
+    </section>
+
+    <!-- II. CAMÉRA -->
+    <section class="sheet" id="camera" role="tabpanel" aria-labelledby="t-camera" tabindex="-1" hidden>
+      <header class="sh-head">
+        <p class="sh-ref">Dossier de traque · feuillet II</p>
+        <h1 class="sh-title">Surveillance</h1>
+      </header>
+      <div class="cam-wrap">
+        <div class="monitor">
+          <div class="screen" id="screen">
+            <div class="feed" id="feed"><img id="camimg" alt=""></div>
+            <canvas id="camnoise" aria-hidden="true"></canvas>
+            <div class="osd" aria-hidden="true">
+              <span class="osd-cam" id="osdcam">CAM 01</span>
+              <span class="osd-rec"><i></i>REC</span>
+              <span class="osd-time" id="osdtime"></span>
+              <span class="osd-zoom" id="osdzoom">×1.0</span>
+            </div>
+            <div class="track" id="track" aria-hidden="true"><span>SUJET : CROC</span></div>
+            <div class="nosignal" id="nosignal" aria-hidden="true">PAS DE SIGNAL</div>
+          </div>
+          <div class="monitor-foot">
+            <span class="brand" aria-hidden="true">SYS·CTV</span>
+            <div class="knobs" role="group" aria-label="Commandes de la caméra">
+              <button type="button" class="knob on" data-cam="1" aria-pressed="true">CAM 01</button>
+              <button type="button" class="knob" data-cam="2" aria-pressed="false">CAM 02</button>
+              <button type="button" class="knob" id="zoombtn" aria-pressed="false">Zoom</button>
+            </div>
+          </div>
+        </div>
+        <aside class="cam-log">
+          <h2 class="h2">Journal du flux</h2>
+          <div class="telex small" id="camlog" aria-live="polite"></div>
+          <p class="hand note-cam">image de surveillance — cadrage auto sur le sujet</p>
+        </aside>
+      </div>
+      <div class="next-wrap"></div>
+    </section>
+
+    <!-- III. PROFIL -->
+    <section class="sheet" id="profil" role="tabpanel" aria-labelledby="t-profil" tabindex="-1" hidden>
+      <div class="coffee c2" aria-hidden="true"></div>
+      <header class="sh-head">
+        <p class="sh-ref">Dossier de traque · feuillet III</p>
+        <h1 class="sh-title">Notes de profilage</h1>
+      </header>
+      <ol class="typed-list profile" id="psy"></ol>
+      <div class="stamp-slot s-prud" data-stamp="PRUDENCE" data-tone="red"></div>
+      <h2 class="h2">Tableau des liens</h2>
+      <p class="hint">Survolez ou sélectionnez une photo pour tendre ses fils. Les éléments se déplacent à la main.</p>
+      <div class="cork" id="cork">
+        <svg class="strings" id="strings" aria-hidden="true"></svg>
+        <svg class="strings labels" id="labels" aria-hidden="true"></svg>
+      </div>
+      <div class="next-wrap"></div>
+    </section>
+
+    <!-- IV. TRI -->
+    <section class="sheet" id="tri" role="tabpanel" aria-labelledby="t-tri" tabindex="-1" hidden>
+      <header class="sh-head">
+        <p class="sh-ref">Dossier de traque · feuillet IV</p>
+        <h1 class="sh-title">Fiche de tri</h1>
+      </header>
+      <p class="lead">Pour le sujet, presque tout le monde est un NPC. Rejouez son tri : un clic classe un sujet « bon NPC », un deuxième « mauvais NPC », un troisième efface le classement.</p>
+      <p class="legend"><span class="lg lg-b">bon NPC</span><span class="lg lg-m">mauvais NPC → Chaos</span><span class="lg lg-e">non-NPC</span></p>
+      <div class="sort" id="sort" role="group" aria-label="Sujets observés"></div>
+      <div class="reports">
+        <div class="rep-head">
+          <h2 class="h2">Rapports d'incident</h2>
+          <p class="rep-count">Chaos enregistrés : <b id="chaoscount">0</b></p>
+        </div>
+        <div class="slot" aria-hidden="true"></div>
+        <div class="rep-list" id="replist" aria-live="polite"><p class="empty">Aucun rapport. Classez un sujet « mauvais NPC » pour en générer un.</p></div>
+        <p class="sim-note">Simulation : les sujets et rapports sont fictifs et servent à illustrer la fiche.</p>
+      </div>
+      <div class="next-wrap"></div>
+    </section>
+
+    <!-- V. ÉVALUATION -->
+    <section class="sheet" id="evaluation" role="tabpanel" aria-labelledby="t-evaluation" tabindex="-1" hidden>
+      <div class="coffee c3" aria-hidden="true"></div>
+      <header class="sh-head">
+        <p class="sh-ref">Dossier de traque · feuillet V</p>
+        <h1 class="sh-title">Grille d'évaluation</h1>
+      </header>
+      <div class="grid-eval" id="stats"></div>
+      <h2 class="h2">Jets de référence</h2>
+      <div class="gauges" id="rolls"></div>
+      <div class="next-wrap"></div>
+    </section>
+
+    <!-- VI. PROTOCOLE -->
+    <section class="sheet" id="protocole" role="tabpanel" aria-labelledby="t-protocole" tabindex="-1" hidden>
+      <header class="sh-head">
+        <p class="sh-ref">Dossier de traque · feuillet VI</p>
+        <h1 class="sh-title">Protocole d'incident</h1>
+      </header>
+      <div id="skills"></div>
+      <div class="next-wrap"></div>
+    </section>
+
+    <!-- VII. MENTION -->
+    <section class="sheet" id="mention" role="tabpanel" aria-labelledby="t-mention" tabindex="-1" hidden>
+      <header class="sh-head">
+        <p class="sh-ref">Dossier de traque · feuillet VII</p>
+        <h1 class="sh-title">Note de service</h1>
+      </header>
+      <div id="titres"></div>
+      <div class="next-wrap"></div>
+    </section>
+
+    <!-- VIII. PIÈCES -->
+    <section class="sheet" id="pieces" role="tabpanel" aria-labelledby="t-pieces" tabindex="-1" hidden>
+      <div class="coffee c4" aria-hidden="true"></div>
+      <header class="sh-head">
+        <p class="sh-ref">Dossier de traque · feuillet VIII</p>
+        <h1 class="sh-title">Pièces à conviction</h1>
+      </header>
+      <p class="lead">Ouvrez un sachet pour examiner la pièce à la loupe.</p>
+      <div class="bags" id="gal"></div>
+      <div class="next-wrap"></div>
+    </section>
+
+  </div>
+
+  <footer class="credit">
+    <p>Illustrations : fan arts, droits réservés à leurs auteurs.</p>
+    <p class="credit-sub">Dossier assemblé à partir de data.js — Le Dédale.</p>
+  </footer>
+</main>
+
+<!-- Couverture : le dossier fermé (porte d'entrée) -->
+<div id="cover" role="dialog" aria-modal="true" aria-labelledby="cv-title">
+  <div class="cover-folder" id="coverFolder">
+    <div class="cv-tab" aria-hidden="true">CROC</div>
+    <div class="cv-front">
+      <span class="cv-clip" aria-hidden="true"></span>
+      <p class="cv-sys">[SYSTÈME] Dossier de traque</p>
+      <h1 class="cv-title" id="cv-title">CROC</h1>
+      <p class="cv-sub" id="cvsub"></p>
+      <dl class="cv-meta">
+        <div><dt>Réf.</dt><dd>???</dd></div>
+        <div><dt>Statut</dt><dd>Sous surveillance</dd></div>
+      </dl>
+      <div class="cv-stamp" aria-hidden="true">CONFIDENTIEL</div>
+      <div class="cv-actions">
+        <button type="button" class="cv-btn main" id="goSound">Ouvrir le dossier, avec le son</button>
+        <button type="button" class="cv-btn" id="goSilent">Ouvrir sans le son</button>
+      </div>
+      <p class="cv-hint">Le son se coupe à tout moment avec le bouton en haut à droite.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Effets plein écran -->
+<div id="beacon" aria-hidden="true"></div>
+<div id="alert" aria-hidden="true" hidden>
+  <div class="al-inner">
+    <p class="al-sys">[SYSTÈME]</p>
+    <p class="al-big">CATASTROPHE</p>
+    <p class="al-ev" id="alev"></p>
+  </div>
+</div>
+<div id="lampDark" aria-hidden="true"></div>
+<div id="lampWarm" aria-hidden="true"></div>
+<div id="grain" aria-hidden="true"></div>
+<div id="flash" aria-hidden="true"></div>
+
+<!-- Table lumineuse (agrandissement des pièces) -->
+<div id="lb" role="dialog" aria-modal="true" aria-label="Examen de la pièce" hidden>
+  <div class="lb-table">
+    <div class="lb-stage" id="lbstage">
+      <img id="lbimg" alt="">
+      <div class="loupe" id="loupe" aria-hidden="true"></div>
+    </div>
+    <div class="lb-side">
+      <p class="lb-n" id="lbn"></p>
+      <p class="lb-alt" id="lbalt"></p>
+      <div class="lb-btns">
+        <button type="button" id="lbprev">Pièce précédente</button>
+        <button type="button" id="lbnext">Pièce suivante</button>
+        <button type="button" id="lbloupe" aria-pressed="true">Loupe : active</button>
+        <button type="button" id="lbx">Refermer le sachet</button>
+      </div>
+      <p class="hand lb-tip">Déplacez la loupe sur l'image.</p>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
